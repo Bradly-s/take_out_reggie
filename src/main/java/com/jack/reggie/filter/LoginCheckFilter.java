@@ -1,6 +1,7 @@
 package com.jack.reggie.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.jack.reggie.common.BaseContext;
 import com.jack.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -23,6 +24,9 @@ public class LoginCheckFilter implements Filter{
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        long id = Thread.currentThread().getId();
+        log.info("线程id为：{}",id);
 
         //1、获取本次请求的URI
         String requestURI = request.getRequestURI();// /backend/index.html
@@ -50,6 +54,10 @@ public class LoginCheckFilter implements Filter{
         //4、判断登录状态，如果已登录，则直接放行
         if(request.getSession().getAttribute("employee") != null){
             log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("employee"));
+
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId);
+
             filterChain.doFilter(request,response);
             return;
         }
@@ -57,6 +65,8 @@ public class LoginCheckFilter implements Filter{
         log.info("用户未登录");
         //5、如果未登录则返回未登录结果，通过输出流方式向客户端页面响应数据
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+
+
         return;
 
     }
