@@ -152,6 +152,7 @@ public class DishController {
 
         List<Dish> list = dishService.list(queryWrapper);
 
+        //List<Dish> list => List<DishDto> dishDtoList  [same as Page]
         List<DishDto> dishDtoList = list.stream().map((item) -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item, dishDto);
