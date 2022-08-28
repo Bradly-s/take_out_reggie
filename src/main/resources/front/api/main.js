@@ -67,4 +67,6 @@ function setMealDishDetailsApi(id) {
     })
 }
 
+axios.defaults.withCredentials = true;
+
 
